@@ -4,3 +4,5 @@ const config = {
     port: process.env.app_port || '3000',
   }
 };
+
+module.exports = config;
