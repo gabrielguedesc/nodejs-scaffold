@@ -2,15 +2,21 @@ const winston = require('winston');
 const moment = require('moment');
 const config = require('../config');
 
-const messageTemplate = options => {
-  const date = moment().format();
-  const level = winston.config.addColors(options.level)
-  const { message = '' } = options;
-
-  return `{"date": "${date}", "level": "${level}", "message": "${message}"}`;
-}
-
 let level, transports;
+
+const makeMessage = (data) => {
+  const { request, level, stack, message } = data;
+
+  const log = {
+    date: moment(),
+    request,
+    level,
+    stack,
+    message
+  };
+
+  return JSON.stringify(log);
+};
 
 switch (config.env) {
   case 'dev':
@@ -22,15 +28,16 @@ switch (config.env) {
     level = 'verbose';
     transports = [
       new winston.transports.File({
-        filename: './src/log/error.log',
-        level: 'error'
-      }),
-      new winston.transports.File({
-        filename: './src/log/combined.log',
-        level: 'verbose',
+        filename: `src/log/errors/${moment().format('YYYY-MM-DD')}.log`,
+        level: 'error',
+        handleExceptions: true,
+        json: true,
+        maxsize: 5242880, //5MB
+        maxFiles: 10,
         format: winston.format.combine(
-          winston.format.printf(options => messageTemplate(options))
-        )
+          winston.format.printf(data => makeMessage(data)),
+          winston.format.colorize()
+        ),
       })
     ];
   break;
