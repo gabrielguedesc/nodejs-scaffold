@@ -1,8 +1,24 @@
-const config = {
-  app: {
-    host: process.env.app_host || 'localhost',
-    port: process.env.app_port || '3000',
-  }
-};
+const dotenv = require('dotenv');
+const convict = require('convict');
 
-module.exports = config;
+dotenv.config();
+
+const config = convict({
+  env: {
+    format: ['prod','dev','test'],
+    default: 'dev',
+    env: 'NODE_ENV'
+  },
+  port: {
+    format: 'port',
+    default: 8000,
+    env: "PORT"
+  }
+});
+
+const env = config.get('env');
+
+config.loadFile(`./src/config/${env}.json`);
+config.validate({ strict: true });
+
+module.exports = config.getProperties();
