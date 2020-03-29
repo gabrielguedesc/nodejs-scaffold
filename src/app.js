@@ -9,8 +9,8 @@ const app = express();
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(errorHandler);
 
 app.use('/', routes);
+app.use(errorHandler);
 
 module.exports = app;
