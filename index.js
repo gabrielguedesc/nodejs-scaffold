@@ -1,5 +1,5 @@
 const app = require('./src/app');
 const config = require('./src/config');
 
-// app.listen(config.env.port, 
-//   () => console.log(`App run in ${config.env.port} port.`));
+app.listen(config.port, 
+  () => console.log(`App run in ${config.port} port.`));
