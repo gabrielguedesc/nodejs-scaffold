@@ -5,15 +5,15 @@ dotenv.config();
 
 const config = convict({
   env: {
-    format: ['prod','dev','test'],
+    format: ['prod', 'dev', 'test'],
     default: 'dev',
-    env: 'ENV'
+    env: 'ENV',
   },
   port: {
     format: 'port',
     default: 8000,
-    env: "PORT"
-  }
+    env: 'PORT',
+  },
 });
 
 const env = config.get('env');

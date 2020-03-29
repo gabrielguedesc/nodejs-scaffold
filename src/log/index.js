@@ -2,27 +2,27 @@ const winston = require('winston');
 const moment = require('moment');
 const config = require('../config');
 
-let level, transports;
+let level;
+let transports;
 
 const makeMessage = (data) => {
-  const { request, level, stack, message } = data;
-
   const log = {
     date: moment(),
-    request,
-    level,
-    stack,
-    message
+    request: data.request,
+    level: data.level,
+    stack: data.stack,
+    message: data.message,
   };
 
   return JSON.stringify(log);
 };
 
 switch (config.env) {
+  default:
   case 'dev':
     level = 'verbose';
     transports = [new winston.transports.Console()];
-  break;
+    break;
 
   case 'prod':
     level = 'verbose';
@@ -32,15 +32,15 @@ switch (config.env) {
         level: 'error',
         handleExceptions: true,
         json: true,
-        maxsize: 5242880, //5MB
+        maxsize: 5242880,
         maxFiles: 10,
         format: winston.format.combine(
-          winston.format.printf(data => makeMessage(data)),
-          winston.format.colorize()
+          winston.format.printf((data) => makeMessage(data)),
+          winston.format.colorize(),
         ),
-      })
+      }),
     ];
-  break;
+    break;
 }
 
 module.exports = winston.createLogger({ level, transports });
